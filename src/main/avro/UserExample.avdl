@@ -11,6 +11,7 @@ protocol ExampleDto {
 
     record PayloadDto{
         string flowEventId;
+        string schemaRegistryTopic;
         bytes payload;
     }
 }
