@@ -17,6 +17,11 @@ public class SpecificRecordSerializerImplTest extends TestCase {
 
     private SpecificRecordSerializer specificRecordSerializer;
     private SpecificRecordDeserializer specificRecordDeserializer;
+    private PayloadDtoFactory payloadDtoFactory;
+    public static final UserDto USER_DTO = UserDto.newBuilder().setEmail("samueledwin.barber@sc.com")
+            .setFirstName("Sam")
+            .setLastName("Barber")
+            .setUserId(UUID.randomUUID().toString()).build();
 
     public void setUp() throws Exception {
         super.setUp();
@@ -24,16 +29,14 @@ public class SpecificRecordSerializerImplTest extends TestCase {
         this.specificRecordSerializer = new SpecificRecordSerializerImpl(schemaRegistryUrl);
         this.specificRecordDeserializer = new SpecificRecordDeserializerImpl(schemaRegistryUrl);
 
+        payloadDtoFactory = new PayloadDtoFactoryImpl(specificRecordSerializer, specificRecordDeserializer);
+
     }
 
     @Test
     public void testSerialize() throws Exception {
-        UserDto userDto = UserDto.newBuilder().setEmail("samueledwin.barber@sc.com")
-                .setFirstName("Sam")
-                .setLastName("Barber")
-                .setUserId(UUID.randomUUID().toString()).build();
 
-        byte[] serialize = specificRecordSerializer.serialize(userDto, UserDto.class.getCanonicalName());
+        byte[] serialize = specificRecordSerializer.serialize(USER_DTO, UserDto.class.getCanonicalName());
 
         PayloadDto flowEventId1 = PayloadDto.newBuilder().setFlowEventId("flowEventId")
                 .setPayload(ByteBuffer.wrap(serialize)).build();
@@ -48,9 +51,16 @@ public class SpecificRecordSerializerImplTest extends TestCase {
 
         UserDto deserializedUser = specificRecordDeserializer.deserialize(deserializedPayload.getPayload().array(), UserDto.class.getCanonicalName());
 
-        assertEquals(userDto, deserializedUser);
+        assertEquals(USER_DTO, deserializedUser);
 
 
     }
 
+    @Test
+    public void testFactory() throws Exception {
+        PayloadDto payloadDto = payloadDtoFactory.newInstance(USER_DTO, "payload1");
+
+        assertEquals(USER_DTO, payloadDtoFactory.extractRecord(payloadDto));
+
+    }
 }
