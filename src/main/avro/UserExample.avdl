@@ -1,0 +1,16 @@
+@namespace("com.sam.avro.dto")
+protocol ExampleDto {
+
+    record UserDto{
+        string userId;
+        string firstName;
+        string lastName;
+        string email;
+        boolean isActive=true;
+    }
+
+    record PayloadDto{
+        string flowEventId;
+        bytes payload;
+    }
+}
