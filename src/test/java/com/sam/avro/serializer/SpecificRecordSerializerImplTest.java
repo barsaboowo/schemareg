@@ -39,6 +39,7 @@ public class SpecificRecordSerializerImplTest extends TestCase {
         byte[] serialize = specificRecordSerializer.serialize(USER_DTO, UserDto.class.getCanonicalName());
 
         PayloadDto flowEventId1 = PayloadDto.newBuilder().setFlowEventId("flowEventId")
+                .setSchemaRegistryTopic(UserDto.class.getCanonicalName())
                 .setPayload(ByteBuffer.wrap(serialize)).build();
 
 
